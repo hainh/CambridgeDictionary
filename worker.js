@@ -17,12 +17,20 @@ async function loadDict(request) {
     }
 }
 
-async function getDict() {
-
+function getDict() {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(['dict'], function(result) {
+            resolve(result.dict);
+        });
+    });
 }
 
-async function setDict() {
-
+function setDict(params) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.set({dict: params.dict}, function() {
+            resolve(params.dict);
+        });
+    });
 }
 
 let handlers = {

@@ -11,17 +11,18 @@
     },
     "incognito": "spanning",
     "action": {},
+    "permissions": [
+        "storage"
+    ],
     "background": {
         "service_worker": "worker.js"
     },
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "css": ["content/dict.css"],
-            "js": ["content/dict.js", "content/jQuery.js", "content/mustache.js"]
-        }
-    ],
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "css": ["content/dict.css"],
+        "js": ["content/dict.js", "content/jQuery.js", "content/mustache.js"]
+    }],
     "host_permissions": [
         "https://dictionary.cambridge.org/"
     ]
-}  
+}

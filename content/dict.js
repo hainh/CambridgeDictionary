@@ -5,6 +5,7 @@
     }
 
     var cambridgeDict = '';
+    var defaultDict = 'english-vietnamese';
     var openingDefs = {};
     var history = {};
     var zIndex = 999999;
@@ -29,7 +30,7 @@
     }
 
     function startLookup(event) {
-        if (event.button !== 0) {
+        if (event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
             return;
         }
         var selectedText = getSelectedText();
@@ -45,7 +46,7 @@
         if (history[cambridgeDict + selectedText.text]) {
             render($(Mustache.render(template, history[cambridgeDict + selectedText.text])), selectedText);
         } else if (testing) {
-            $.get(`https://dictionary.cambridge.org/dictionary/${selectedText.dict || 'english-vietnamese'}/${selectedText.text}`, function(text) {
+            $.get(`https://dictionary.cambridge.org/dictionary/${selectedText.dict || defaultDict}/${selectedText.text}`, function(text) {
                 displayDict(Object.assign({definition: text}, selectedText));
             })
         } else {
@@ -67,7 +68,7 @@
         var left = Math.max(0, Math.min($(document).width() - dictDef.outerWidth(), selectedText.x - dictDef.outerWidth() / 2))
         dictDef.css({top, left, zIndex, width: Math.min($(document).width(), dictDef.outerWidth())});
         dragElement(dictDef[0]);
-        dictDef.find('.cambr-dict-header span').on('click', function(event) {
+        dictDef.find('.cambr-dict-header span.cambr-dict-close-btn').on('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
             $(this).parent().parent().remove();
@@ -78,6 +79,7 @@
         dictDef.on('mousedown', function(event) {
             $(this).css('zIndex', ++zIndex);
         });
+        dictDef.find('select').val(cambridgeDict || defaultDict);
     }
 
     function parseContent(response) {
@@ -261,7 +263,8 @@
             elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
         }
 
-        function closeDragElement() {
+        function closeDragElement(e) {
+            e.stopPropagation();
             // stop moving when mouse button is released:
             document.onmouseup = null;
             document.onmousemove = null;

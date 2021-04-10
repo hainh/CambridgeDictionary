@@ -27,16 +27,13 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
 }
 
-.cambr-dict-header span {
-    font-size: 14px !important;
-    cursor: pointer !important;
-}
-
 .cambr-dict-header .cambr-dict-close-btn {
     margin-top: -20px !important;
     margin-right: -10px !important;
     padding: 10px !important;
     float: right !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
 }
 
 .cambr-dict-header .cambr-dict-title {
