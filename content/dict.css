@@ -1,0 +1,114 @@
+.cambr-dict-cont {
+    position: absolute !important;
+    background-color: #fffadc !important;
+    border: 2px solid #ffec98 !important;
+    border-radius: 7px !important;
+    color: rgb(43, 43, 43) !important;
+    resize: both !important;
+    overflow: auto !important;
+    height: 300px;
+    width: 485px;
+    min-width: 220px !important;
+    min-height: 200px !important;
+    text-align: left !important;
+    font-family: serif;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+
+.cambr-dict-header {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 12px !important;
+    cursor: move !important;
+    background-color: #ffdb79 !important;
+    color: goldenrod !important;
+    position: sticky !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+.cambr-dict-header span {
+    font-size: 14px !important;
+    cursor: pointer !important;
+}
+
+.cambr-dict-header .cambr-dict-close-btn {
+    margin-top: -20px !important;
+    margin-right: -10px !important;
+    padding: 10px !important;
+    float: right !important;
+}
+
+.cambr-dict-header .cambr-dict-title {
+    margin-top: -8px !important;
+    padding: 0 !important;
+    float: left !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 16px !important;
+}
+
+.cambr-dict-content {
+    padding: 5px !important;
+}
+
+.cambr-dict-cont .word {
+    font-weight: bold !important;
+}
+
+.cambr-dict-cont .pos {
+    font-style: italic !important;
+}
+
+.cambr-dict-cont ul {
+    display: block !important;
+    list-style-type: disc !important;
+    margin-block-start: 1em !important;
+    margin-block-end: 1em !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: 0px !important;
+    padding-inline-start: 40px !important;
+    margin: 3px 0 !important;
+    padding: 0 0 0 17px !important;
+}
+
+.cambr-dict-cont ul li {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.cambr-dict-cont .dictsl {
+    padding-top: 10px !important;
+}
+
+.cambr-dict-cont .def {
+    font-style: oblique !important;
+}
+
+.cambr-dict-cont .trans {
+    font-style: oblique !important;
+    font-weight: bold !important;
+}
+
+.cambr-dict-cont .examp {
+    color: rgb(131, 131, 131) !important;
+}
+
+.cambr-dict-cont::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.cambr-dict-cont::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.35) !important;
+    border-radius: 16px !important;
+}
+
+.cambr-dict-cont::-webkit-scrollbar-track {
+    background: rgb(179, 1, 1) !important;
+    border-radius: 16px !important;
+}
+
+.cambr-dict-cont::-webkit-scrollbar-button {
+    background: rgb(179, 2, 2) !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+}

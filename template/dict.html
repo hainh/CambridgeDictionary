@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge Dictionanry</title>
+    <link href="../content/dict.css" rel="stylesheet" type="text/css">
+    <script src="../content/dict.js"></script>
+    <script src="../content/jQuery.js"></script>
+    <script src="../content/mustache.js"></script>
+</head>
+<body>
+    <p>Test this text <div>daily employ</div></p>
+    <p>Test this text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text <div>daily work</div></p>
+    <p>Test this text <div>daily work</div></p>
+    <p>Test this text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text <div>daily work</div></p>
+    <p>Test this text <div>daily work</div></p>
+    <p>Test this text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text <div>daily work</div></p>
+    <p>Test this text <div>daily work</div></p>
+    <p>Test this text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text <div>daily work</div></p>
+    
+    <div class="cambr-dict-cont" id="camb-dict-word-{{id}}" style="display: none;">
+        <div class="cambr-dict-header" id="camb-dict-word-{{id}}-header">
+            <span class="cambr-dict-title">Cambridge Dictionanry</span> <span id="camb-dict-word-{{id}}-close" class="cambr-dict-close-btn" data-dict="{{origin}}">x</span>
+        </div>
+        <div class="cambr-dict-content">
+            {{#entries}}
+                <br/>
+                <div class="word">{{word}}</div>
+                {{#pos}}
+                    <div class="pos">{{pos}}</div>
+                {{/pos}}
+                {{#pron}}
+                    <div class="pron">{{pron}}</div>
+                {{/pron}}
+                {{#defs}}
+                    <div class="def">- {{def}}</div>
+                    <div class="trans">= {{trans}}</div>
+                    {{#examp.length}}
+                    <ul>
+                    {{/examp.length}}
+                    {{#examp}}
+                        <li class="examp">{{.}}</li>
+                    {{/examp}}
+                    {{#examp.length}}
+                    </ul>
+                    {{/examp.length}}
+                {{/defs}}
+            {{/entries}}
+            {{^entries}}
+                <div class="word">{{word}}</div>
+                <div class="pos">No definition or translation</div>
+            {{/entries}}
+            <div class="dictsl">Select dictionary:</div>
+            <select class="dictsllist">
+                <option value="english-vietnamese">English–Vietnamese</option>
+                <option value="english-arabic">English–Arabic</option>
+                <option value="english-catalan">English–Catalan</option>
+                <option value="english-chinese-traditional">English–Chinese (Tra)</option>
+                <option value="english-chinese-simplified">English–Chinese (Sim)</option>
+                <option value="english-czech">English–Czech</option>
+                <option value="english-danish">English–Danish</option>
+                <option value="english-french">English–French</option>
+                <option value="english-german">English–German</option>
+                <option value="english-indonesian">English–Indonesian</option>
+                <option value="english-italian">English–Italian</option>
+                <option value="english-japanese">English–Japanese</option>
+                <option value="english-korean">English–Korean</option>
+                <option value="english-malay">English–Malay</option>
+                <option value="english-norwegian">English–Norwegian</option>
+                <option value="english-polish">English–Polish</option>
+                <option value="english-portuguese">English–Portuguese</option>
+                <option value="english-spanish">English–Spanish</option>
+                <option value="english-russian">English–Russian</option>
+                <option value="english-thai">English–Thai</option>
+                <option value="english-turkish">English–Turkish</option>
+                <option value="dutch-english">Dutch–English</option>
+                <option value="french-english">French–English</option>
+                <option value="germanenglish">German–English</option>
+                <option value="indonesian-english">Indonesian–English</option>
+                <option value="italian-english">Italian–English</option>
+                <option value="japanese-english">Japanese–English</option>
+                <option value="polish-english">Polish–English</option>
+                <option value="portuguese-english">Portuguese–English</option>
+                <option value="spanish-english">Spanish–English</option>
+            </select>
+        </div>
+    </div>
+</body>
+</html>

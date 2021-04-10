@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Cambridge Dictionary",
+    "version": "0.1",
+    "description": "A Cambridge dictionary extension to search a word directly in any web page",
+    "author": "github.com/hainh",
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
+    "incognito": "spanning",
+    "action": {},
+    "background": {
+        "service_worker": "worker.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "css": ["content/dict.css"],
+            "js": ["content/dict.js", "content/jQuery.js", "content/mustache.js"]
+        }
+    ],
+    "host_permissions": [
+        "https://dictionary.cambridge.org/"
+    ]
+}  
