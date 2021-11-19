@@ -29,7 +29,13 @@
         }
     }
 
+    /** @param {MouseEvent} event */
     function startLookup(event) {
+        if (event.ctrlKey && event.shiftKey && event.altKey) {
+        } else if (event.ctrlKey && event.shiftKey) {
+        } else if (event.ctrlKey) {
+            $('.cambr-dict-header span.cambr-dict-close-btn').trigger('click');
+        }
         if (event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
             return;
         }
