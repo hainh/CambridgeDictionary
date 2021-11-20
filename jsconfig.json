@@ -1,0 +1,15 @@
+{
+    "typeAcquisition": {
+        "include": [
+            "jquery"
+        ]
+    },
+    "json.schemas": [
+        {
+          "fileMatch": [
+            "/manifest.json"
+          ],
+          "url": "http://json.schemastore.org/chrome-manifest"
+        }
+      ]
+}

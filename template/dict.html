@@ -36,7 +36,9 @@
                 {{/pron}}
                 {{#defs}}
                     <div class="def">- {{def}}</div>
-                    <div class="trans">= {{trans}}</div>
+                    {{#trans}}
+                        <div class="trans">= {{trans}}</div>
+                    {{/trans}}
                     {{#examp.length}}
                     <ul>
                     {{/examp.length}}
@@ -55,6 +57,7 @@
             <div class="dictsl">Select dictionary:</div>
             <select class="dictsllist">
                 <option value="english-vietnamese">English–Vietnamese</option>
+                <option value="english">English</option>
                 <option value="english-arabic">English–Arabic</option>
                 <option value="english-catalan">English–Catalan</option>
                 <option value="english-chinese-traditional">English–Chinese (Tra)</option>

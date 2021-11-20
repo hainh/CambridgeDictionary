@@ -11,7 +11,7 @@
     min-width: 220px !important;
     min-height: 200px !important;
     text-align: left !important;
-    font-family: serif;
+    font-family: serif !important;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
 }
 
@@ -34,6 +34,13 @@
     float: right !important;
     cursor: pointer !important;
     font-size: 14px !important;
+}
+
+.cambr-dict-header .cambr-dict-help {
+    cursor: pointer !important;
+    border-radius: 50%;
+    background-color: aquamarine;
+    color: darkslategrey;
 }
 
 .cambr-dict-header .cambr-dict-title {
@@ -88,6 +95,15 @@
 
 .cambr-dict-cont .examp {
     color: rgb(131, 131, 131) !important;
+}
+
+.cambr-dict-cont .prons .region {
+    font-weight: bold !important;
+    font-style: italic !important;
+}
+
+.cambr-dict-cont .prons .lab {
+    font-style: italic !important;
 }
 
 .cambr-dict-cont::-webkit-scrollbar {

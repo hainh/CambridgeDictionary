@@ -10,12 +10,25 @@
         "128": "icon128.png"
     },
     "incognito": "spanning",
-    "action": {},
+    "action": {
+        "default_title": "Cambridge Dictionary",
+        "default_popup": "popup/popup.html"
+    },
     "permissions": [
         "storage"
     ],
     "background": {
         "service_worker": "worker.js"
+    },
+    "commands": {
+        "toggle-translation": {
+            "suggested_key": "Ctrl+Shift+Q",
+            "description": "Toggle translation on/off"
+        },
+        "close-all-definition-windows": {
+            "suggested_key": "Ctrl+Shift+Z",
+            "description": "Close all definition windows in current tab"
+        }
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
