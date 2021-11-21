@@ -255,7 +255,7 @@
             };
         } else {
             if (response.dict !== cambridgeDict) {
-                entries.unshift({word: `No definition or translation of "${response.text}" in ${dictNames[cambridgeDict]} Dictionary, show in English Dictionary below.`})
+                entries.unshift({word: '', pos: `No definition or translation of "${response.text}" in ${dictNames[cambridgeDict]} Dictionary, show in English Dictionary below.`})
             }
             source.origin = response.text;
             source.entries = entries;
