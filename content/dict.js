@@ -46,7 +46,7 @@
         if (!event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey && !isEditable(event.target)) {
             if (event.key.startsWith('Esc')) {
                 closeAllDefWindows();
-            } else if (/[A-Z]/.test(event.key.toUpperCase())) {
+            } else if (/^[A-Z]$/.test(event.key.toUpperCase())) {
                 var max = -1, maxEl;
                 $('.cambr-dict-cont').each(function() {
                     let z = +$(this).css('z-index');
@@ -140,7 +140,7 @@
         var left = Math.max(0, Math.min($(document).width() - dictDef.outerWidth(), selectedText.x - dictDef.outerWidth() / 2));
         var selectedTextCopy = JSON.parse(JSON.stringify(selectedText));
         delete selectedTextCopy.definition;
-        dictDef.css({top, left, zIndex, width: Math.min($(document).width(), dictDef.outerWidth())})
+        dictDef.css({top, left, zIndex: ++zIndex, width: Math.min($(document).width(), dictDef.outerWidth())})
             .attr('selected-text', encodeURIComponent(JSON.stringify(selectedTextCopy)));
         dragElement(dictDef[0]);
         dictDef.find('.cambr-dict-header span.cambr-dict-close-btn').on('click', function(event) {
