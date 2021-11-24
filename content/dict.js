@@ -43,10 +43,10 @@
 
     /** @param {KeyboardEvent} event*/
     function closeTopWindow(event) {
-        if (!event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey && !isEditable(event.target)) {
+        if (!event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey) {
             if (event.key.startsWith('Esc')) {
                 closeAllDefWindows();
-            } else if (/^[A-Z]$/.test(event.key.toUpperCase())) {
+            } else if (/^[A-Z]$/.test(event.key.toUpperCase()) && !isEditable(event.target)) {
                 var max = -1, maxEl;
                 $('.cambr-dict-cont').each(function() {
                     let z = +$(this).css('z-index');
@@ -182,12 +182,12 @@
      * @param {{doc: JQuery<HTMLElement>}} source
      * @returns {Array<Entry>}
      */
-    function findEntriesVn(source) {
+    function findEntriesEnVn(source) {
         return source.doc.find('.kdic').map((i, elem) => {
             var parent = $(elem);
             var word = parent.find('.di-title').text().trim();
             var pos = parent.find('.di-head .pos').text().trim();
-            var pron = parent.find('.di-head .pron').text().trim();
+            var pron = parent.find('.di-head .pron').text().trim().replace(/(^\/)|(\/$)/g, '');
             var defs = parent.find('.pos-body .pr').map(function() {
                 var parent = $(this);
                 var def = parent.find('.def-head').text().replace('●', '').trim();
@@ -239,7 +239,7 @@
 
     function findEntries(doc, dict) {
         switch (dict) {
-            case 'english-vietnamese': return findEntriesVn(doc);
+            case 'english-vietnamese': return findEntriesEnVn(doc);
             default: return findEntriesEn(doc);
         }
     }
@@ -329,7 +329,7 @@
                         {{#aud}}
                         {{/aud}}
                         {{#ipa}}
-                            <span class="ipa">/{{ipa}}</span>
+                            <span class="ipa">/{{ipa}}/</span>
                         {{/ipa}}
                     </span>&nbsp
                 {{/prons}}
