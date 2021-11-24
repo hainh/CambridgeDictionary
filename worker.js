@@ -2,6 +2,18 @@ let enabled = -1;
 
 // chrome.action.onClicked.addListener(function(tab) { alert('icon clicked')});
 
+chrome.runtime.onStartup.addListener(onStart);
+chrome.runtime.onInstalled.addListener(onStart);
+
+function onStart() {
+    if (enabled === -1) {
+        isEnabled().then(value => {
+            enabled = value;
+            setIcon(enabled);
+        });
+    }
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (!handlers[request.method]) {
         return false;
@@ -11,9 +23,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 async function loadDict(request) {
-    if (enabled === -1) {
-        enabled = await isEnabled();
-    }
     if (!enabled) return null;
     try {
         var response = await fetch(`https://dictionary.cambridge.org/dictionary/${request.dict || 'english-vietnamese'}/${request.text}`);
@@ -56,6 +65,7 @@ let handlers = {
     async toggle() {
         enabled = !(await isEnabled());
         await set('enabled', enabled ? '1' : '0');
+        setIcon(enabled);
         console.log('Translation is ' + (enabled ? 'enabled' : 'disabled'));
         chrome.tabs.query({}, tabs => {
             tabs.forEach(tab => {
@@ -66,6 +76,20 @@ let handlers = {
         });
         return enabled;
     }
+}
+
+function setIcon(enabled) {
+    const icon_enabled = {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },  icon_disabled = {
+        "16": "icon16-stop.png",
+        "48": "icon48-stop.png",
+        "128": "icon128-stop.png"
+    };
+    chrome.action.setIcon({path: enabled ? icon_enabled : icon_disabled});
+    chrome.action.setTitle({title: 'Cambridge Dictionary Is ' + (enabled ? 'Enabled' : 'Disabled')})
 }
 
 chrome.commands.onCommand.addListener((command) => {
