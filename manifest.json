@@ -23,7 +23,7 @@
     "commands": {
         "toggle-translation": {
             "suggested_key": "Ctrl+Shift+Q",
-            "description": "Toggle translation on/off"
+            "description": "Activate the extension"
         },
         "close-all-definition-windows": {
             "suggested_key": "Ctrl+Shift+Z",
