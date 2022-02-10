@@ -1,0 +1,76 @@
+:root {
+    --tab-card-width: max(130px, 8vw);
+}
+
+.tabs-container {
+    width: 80vw;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding: 5px;
+    transform: translate(calc(-50% + 30px), -50%);
+    background-color: #333c;
+    border-radius: 13px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.tabs-container.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    transition: transform 0.25s cubic-bezier(0, 0.5, 0.5, 1), opacity 0.25s cubic-bezier(0, 0.5, 0.5, 1);
+}
+
+.tabs-container .tab-row {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.tab-row .tab-card {
+    position: relative;
+    display: inline-block;
+    width: var(--tab-card-width);
+    height: var(--tab-card-width);
+}
+
+.tab-row .tab-card>div {
+    margin: 5%;
+    width: 90%;
+    height: 90%;
+    border: 0px solid;
+    border-radius: 5px;
+    background-color: #ddde;
+    position: relative;
+    overflow: hidden;
+    transition: background-color .25s ease-out;
+}
+
+.tab-row .tab-card.active>div {
+    background-color: #ffff;
+}
+
+.tab-row .tab-card .tab-icon {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 30%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.tab-row .tab-card .tab-title {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    color: black;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 12px;
+    font-weight: lighter;
+}

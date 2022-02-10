@@ -15,10 +15,13 @@
         "default_popup": "popup/popup.html"
     },
     "permissions": [
-        "storage"
+        "storage",
+        "tabs",
+        "activeTab"
     ],
     "background": {
-        "service_worker": "worker.js"
+        "service_worker": "worker.js",
+        "type": "module"
     },
     "commands": {
         "toggle-translation": {
@@ -28,12 +31,25 @@
         "close-all-definition-windows": {
             "suggested_key": "Ctrl+Shift+Z",
             "description": "Close all definition windows in current tab"
+        },
+        "switch-tab1": {
+            "suggested_key": "Alt+Q",
+            "description": "Switch tab"
+        },
+        "switch-tab2": {
+            "suggested_key": "",
+            "description": "Switch tab alternative"
         }
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "css": ["content/dict.css"],
-        "js": ["content/dict.js", "content/jQuery.js", "content/mustache.js"]
+        "css": ["content/dict.css", "content/tab.css"],
+        "js": [
+            "content/jQuery.js",
+            "content/mustache.js",
+            "content/switchtab.js",
+            "content/dict.js"
+        ]
     }],
     "host_permissions": [
         "https://dictionary.cambridge.org/"

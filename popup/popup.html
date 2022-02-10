@@ -8,12 +8,81 @@
     <script src="popup.js"></script>
     <style>
         body {
-            width: 200px;
+            width: 300px;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 1rem;
+        }
+        .title {
+            margin-top: 5px;
+        }
+        #key {
+            width: 80%;
+            text-transform: uppercase;
+            height: 1.2rem;
+        }
+        #key:focus, #key:active {
+            border: solid 1px;
+        }
+        .meta input {
+            margin: 0;
+            padding: 0 3px;
+        }
+        .meta>div {
+            width: 100%;
+            padding: 5px 0;
+        }
+        .meta label {
+            display: inline-block;
+            width: 90%;
+            color: #888;
+        }
+        .meta label:hover {
+            color: #222;
+        }
+        #keys-binding {
+            display: flex;
+            align-items: center;
+        }
+        #keys-binding>* {
+            flex-direction: column;
+            flex-basis: 50%;
+            align-items: center;
+        }
+        .meta {
+            display: flex;
+        }
+        .meta>div {
+            flex-direction: row;
+        }
+        #key {
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div id="status">
+    <div class="toggle-extension">
+        <button id="toggleBtn">Toggle</button> <span id="status">This extension is enabled...</span>
+    </div>
+    <div class="shortcuts">
+        <div class="title">
+            Switch tab shortcut
+        </div>
+        <div id="keys-binding">
+            <div class="meta">
+                <div>
+                    <input type="checkbox" id="ctrl-key"><label for="ctrl-key">Ctrl</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="shift-key"><label for="shift-key">Shift</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="alt-key"><label for="alt-key">Alt</label>
+                </div>
+            </div>
+            <input type="text" id="key">
+            <!-- <div>
+            </div> -->
+        </div>
     </div>
 </body>
 </html>

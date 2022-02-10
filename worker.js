@@ -12,6 +12,14 @@ function onStart() {
             setIcon(enabled);
         });
     }
+
+    chrome.tabs.query({}, tabs => {
+        tabs.forEach(tab => {
+            lastTabs[tab.windowId] = lastTabs[tab.windowId] || [];
+            lastTabs[tab.windowId].push(tab.id);
+            // console.log('Loaded tab', tab);
+        });
+    });
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -33,20 +41,13 @@ async function loadDict(request) {
     }
 }
 
-function get(key) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get([key], function(result) {
-            resolve(result[key]);
-        });
-    });
+async function get(key) {
+    let result = await chrome.storage.sync.get([key]);
+    return result[key];
 }
 
-function set(key, value) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.set({[key]: value}, function() {
-            resolve(value);
-        });
-    });
+async function set(key, value) {
+    await chrome.storage.sync.set({[key]: value});
 }
 
 async function isEnabled() {
@@ -62,16 +63,42 @@ let handlers = {
     setDict(request) {
         return set('dict', request.dict);
     },
+    getSwitchKeys() {
+        return get('switchkey');
+    },
+    setSwitchKeys(request) {
+        for (var windowId in lastTabs) {
+            for (var tabId of lastTabs[windowId]) {
+                chrome.tabs.sendMessage(tabId, {keyChain: request.keys}, function() {});
+            }
+        }
+        return set('switchkey', request.keys);
+    },
+    async getTabs() {
+        let window = await chrome.windows.getCurrent();
+        if (!lastTabs[window.id]) return [];
+        let tabs = await chrome.tabs.query({windowId: window.id});
+        let result = tabs.map(tab => ({
+            index: lastTabs[window.id].indexOf(tab.id),
+            favIcon: tab.favIconUrl,
+            title: tab.title,
+            id: tab.id
+        }));
+        console.log('getTabs', result);
+        return result;
+    },
+    async activateTab(request) {
+        await chrome.tabs.update(request.id, {active: true});
+    },
     async toggle() {
         enabled = !(await isEnabled());
         await set('enabled', enabled ? '1' : '0');
         setIcon(enabled);
         console.log('Translation is ' + (enabled ? 'enabled' : 'disabled'));
-        chrome.tabs.query({}, tabs => {
-            tabs.forEach(tab => {
-                chrome.tabs.sendMessage(tab.id, {enabled: enabled}, function(value){
-                    console.log('Sent toggle', value, 'to', JSON.stringify(tab));
-                });
+        let tabs = await chrome.tabs.query({});
+        tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, {enabled: enabled}, function(value){
+                console.log('Sent toggle', value, 'to', JSON.stringify(tab));
             });
         });
         return enabled;
@@ -92,16 +119,40 @@ function setIcon(enabled) {
     chrome.action.setTitle({title: 'Cambridge Dictionary Is ' + (enabled ? 'Enabled' : 'Disabled')})
 }
 
-chrome.commands.onCommand.addListener((command) => {
+chrome.commands.onCommand.addListener(async (command) => {
     switch (command) {
         case 'toggle-translation':
-            handlers.toggle();
+            await handlers.toggle();
             break;
         case 'close-all-definition-windows':
-            chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-                chrome.tabs.sendMessage(tabs[0].id, {closeAllDefWindows: true});
-            });
+            var tabs = await chrome.tabs.query({active: true, currentWindow: true});
+            chrome.tabs.sendMessage(tabs[0].id, {closeAllDefWindows: true});
+            break;
+        case 'switch-tab1':
+        case 'switch-tab2':
+            var tabs = lastTabs[(await chrome.windows.getCurrent()).id];
+            if (tabs) break;
+
             break;
     }
     console.log(`Command ${command} triggered`);
-})
+});
+
+/**
+ * @type {{[key: number]: Array<Number>}}
+ */
+let lastTabs = {};
+
+chrome.tabs.onActivated.addListener(async tab => {
+    let tabs = lastTabs[tab.windowId];
+    if (tabs) {
+        let active = tabs.indexOf(tab.tabId);
+        if (active >= 0) {
+            tabs.splice(active, 1);
+        }
+        tabs.unshift(tab.tabId);
+    } else {
+        lastTabs[tab.windowId] = [tab.tabId];
+    }
+    console.log(lastTabs, tabs);
+});

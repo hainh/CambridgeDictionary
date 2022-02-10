@@ -2,6 +2,7 @@
     window.onload = function () {
         loadjQuery();
         start();
+        window.switchTab.init();
     }
 
     var cambridgeDict = '';
@@ -15,12 +16,17 @@
         chrome.runtime.sendMessage({method: 'isEnabled'}, (value) => {
             enabled = value;
         });
+        chrome.runtime.sendMessage({method: 'getSwitchKeys'}, (value) => {
+            window.switchTab.setKeyChain(value);
+        })
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             if (typeof request.enabled === 'boolean') {
                 enabled = request.enabled;
                 sendResponse(enabled);
             } else if (request.closeAllDefWindows) {
                 closeAllDefWindows();
+            } else if (request.keyChain) {
+                window.switchTab.setKeyChain(request.keyChain);
             }
             return true;
         });
