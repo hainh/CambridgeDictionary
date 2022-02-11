@@ -35,7 +35,7 @@
     }
 
     function start() {
-        console.log('$ version', $.fn.jquery);
+        // console.log('$ version', $.fn.jquery);
 
         $(document.body).on('mouseup', startLookup).on('keyup', closeTopWindow);
         if (!testing) {

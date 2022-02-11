@@ -27,24 +27,24 @@
     function switchTabKeydown(event) {
         if (matchMetaKey(event) === metaLength) {
             if (!start && chosenTab < 0 && event.key.length > 1) {
-                console.log('Switch tab Start');
+                // console.log('Switch tab Start');
                 chosenTab = 0;
                 chrome.runtime.sendMessage({method: 'getTabs'}, result => {
                     tabs = result;
                     if (tabs.length === 0) {
                         removeTabChooser();
-                        console.log('No tab loaded');
+                        // console.log('No tab loaded');
                         return;
                     }
                     tabs.sort((a, b) => a.index - b.index);
-                    console.log('loaded tabs', tabs);
+                    // console.log('loaded tabs', tabs);
                     renderTabs();
                 });
             } else if (event.key.length === 1) {
                 start = true;
             }
-        } else if (start) {
-            console.log('Deactivate switch tab');
+        } else if (start || chosenTab >= 0) {
+            // console.log('Deactivate switch tab');
             removeTabChooser();
         }
         // console.log('key down', event.ctrlKey, event.shiftKey, event.altKey, event.key, event.code, event.which);
@@ -64,7 +64,7 @@
                 switchChosenTab(cardsPerRow)
             }
         } else if (event.key.length > 1 && matchMetaKey(event) < metaLength) {
-            console.log('Do switch tab', chosenTab, tabs[chosenTab]);
+            // console.log('Do switch tab', chosenTab, tabs[chosenTab]);
             chrome.runtime.sendMessage({method: 'activateTab', id: tabs[chosenTab].id});
             removeTabChooser()
         }
@@ -118,7 +118,7 @@
         if (!container.hasClass('active')) {
             container.addClass('active');
         }
-        console.log('choosen tab', chosenTab, tabs.length);
+        // console.log('choosen tab', chosenTab, tabs.length);
     }
 
     function removeTabChooser() {

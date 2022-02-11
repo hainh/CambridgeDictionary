@@ -1,6 +1,6 @@
 function loadjQuery() {
     if (!window.jQuery) {
-        console.log('load new jquery');
+        // console.log('load new jquery');
         /*!
          * jQuery JavaScript Library v3.6.0
          * https://jquery.com/
