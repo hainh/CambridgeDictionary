@@ -6,6 +6,11 @@
     function init() {
         $(document.body).on('keyup', switchTabKeyup).on('keydown', switchTabKeydown);
         document.addEventListener('visibilitychange', removeTabChooser);
+        window.addEventListener('keydown', function(event) {
+            if (start && altKey && !shiftKey && !ctrlKey && ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']) {
+                event.preventDefault();
+            }
+        });
     }
     
     function setKeyChain(keyChain) {
@@ -65,7 +70,9 @@
             }
         } else if (event.key.length > 1 && matchMetaKey(event) < metaLength) {
             // console.log('Do switch tab', chosenTab, tabs[chosenTab]);
-            chrome.runtime.sendMessage({method: 'activateTab', id: tabs[chosenTab].id});
+            if (tabs[chosenTab]) {
+                chrome.runtime.sendMessage({method: 'activateTab', id: tabs[chosenTab].id});
+            }
             removeTabChooser()
         }
         // console.log('key up', event.ctrlKey, event.shiftKey, event.altKey, event.key.toUpperCase())
@@ -78,6 +85,7 @@
         let rowCount = tabs.length / cardsPerRow;
         rowCount = Math.floor(rowCount) + (rowCount - Math.floor(rowCount) > 0 ? 1 : 0);
         containerWidth = cardsPerRow * 130;
+        containerWidth = Math.min(tabs.length * 130, containerWidth);
 
         let rows = [];
         for (var i = 0; i < rowCount; ++i) {
@@ -112,13 +120,14 @@
             }
         }
         chosenTab = (chosenTab + direction + tabs.length * 100) % (tabs.length || 2);
+        // console.log('choosen tab', chosenTab, tabs.length);
+        if (!tabs[chosenTab]) return;
         $('.tab-row .tab-card').removeClass('active');
         $('#tab-card-' + tabs[chosenTab].id).addClass('active');
         let container = $('#main-tab-container');
         if (!container.hasClass('active')) {
             container.addClass('active');
         }
-        // console.log('choosen tab', chosenTab, tabs.length);
     }
 
     function removeTabChooser() {
