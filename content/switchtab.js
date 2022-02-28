@@ -47,6 +47,7 @@
                 });
             } else if (event.key.length === 1) {
                 start = true;
+                // console.log('start');
             }
         } else if (start || chosenTab >= 0) {
             // console.log('Deactivate switch tab');
@@ -120,8 +121,8 @@
             }
         }
         chosenTab = (chosenTab + direction + tabs.length * 100) % (tabs.length || 2);
-        // console.log('choosen tab', chosenTab, tabs.length);
-        if (!tabs[chosenTab]) return;
+        // console.log('choosen tab', chosenTab, tabs.length, direction);
+        if (!tabs[chosenTab]) return console.log('chose tab failed', chosenTab, tabs.length);
         $('.tab-row .tab-card').removeClass('active');
         $('#tab-card-' + tabs[chosenTab].id).addClass('active');
         let container = $('#main-tab-container');

@@ -31,14 +31,6 @@
         "close-all-definition-windows": {
             "suggested_key": "Ctrl+Shift+Z",
             "description": "Close all definition windows in current tab"
-        },
-        "switch-tab1": {
-            "suggested_key": "Alt+Q",
-            "description": "Switch tab"
-        },
-        "switch-tab2": {
-            "suggested_key": "",
-            "description": "Switch tab alternative"
         }
     },
     "content_scripts": [{

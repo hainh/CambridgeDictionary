@@ -128,14 +128,7 @@ chrome.commands.onCommand.addListener(async (command) => {
             var tabs = await chrome.tabs.query({active: true, currentWindow: true});
             chrome.tabs.sendMessage(tabs[0].id, {closeAllDefWindows: true});
             break;
-        case 'switch-tab1':
-        case 'switch-tab2':
-            var tabs = lastTabs[(await chrome.windows.getCurrent()).id];
-            if (tabs) break;
-
-            break;
     }
-    console.log(`Command ${command} triggered`);
 });
 
 /**
