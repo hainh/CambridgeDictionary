@@ -79,7 +79,7 @@ let handlers = {
         if (!lastTabs[window.id]) return [];
         let tabs = await chrome.tabs.query({windowId: window.id});
         let result = tabs.map(tab => ({
-            index: lastTabs[window.id].indexOf(tab.id),
+            index: lastTabs[window.id].indexOf(tab.id) < 0 ? 100000 : lastTabs[window.id].indexOf(tab.id),
             favIcon: tab.favIconUrl,
             title: tab.title,
             id: tab.id
