@@ -85,6 +85,12 @@
         cardsPerRow = Math.floor(containerWidth / 130);
         let rowCount = tabs.length / cardsPerRow;
         rowCount = Math.floor(rowCount) + (rowCount - Math.floor(rowCount) > 0 ? 1 : 0);
+        let lastRowCount = tabs.length % cardsPerRow;
+        if (lastRowCount > 0 && cardsPerRow - lastRowCount > rowCount) {
+            cardsPerRow = Math.floor(tabs.length / rowCount) + 1;
+            rowCount = tabs.length / cardsPerRow;
+            rowCount = Math.floor(rowCount) + (rowCount - Math.floor(rowCount) > 0 ? 1 : 0);
+        }
         containerWidth = cardsPerRow * 130;
         containerWidth = Math.min(tabs.length * 130, containerWidth);
 
