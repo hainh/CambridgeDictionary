@@ -104,6 +104,14 @@
 
         let htmlElement = $(Mustache.render(template, {rows, width: containerWidth + 'px'}));
         $(document.body).append(htmlElement);
+        $('.tab-card').on('click', function() {
+            let id = $(this).attr('id').split('-').pop();
+            chosenTab = tabs.findIndex(tab => tab.id == id);
+            if (tabs[chosenTab]) {
+                chrome.runtime.sendMessage({method: 'activateTab', id: tabs[chosenTab].id});
+                removeTabChooser();
+            }
+        });
     }
 
     function switchChosenTab(direction) {
@@ -112,12 +120,33 @@
             let rowCount = tabs.length / cardsPerRow;
             rowCount = Math.floor(rowCount) + (rowCount - Math.floor(rowCount) > 0 ? 1 : 0);
             let cardsLastRowCount = tabs.length % cardsPerRow;
-            let cardspadding = (cardsPerRow - cardsLastRowCount) / 2;
-            let nextRow = (currentRow + rowCount + (direction > 0 ? 1 : -1));
+            if (cardsLastRowCount === 0) cardsLastRowCount = cardsPerRow;
+            let startXOfLastRow = (cardsPerRow - cardsLastRowCount) / 2;
+            let xOfCurrentRow = chosenTab % cardsPerRow;
+            let nextRow = (currentRow + rowCount + (direction > 0 ? 1 : -1)) % rowCount;
             let nextRowIsLast = nextRow === rowCount - 1;
             let currentRowIsLast = currentRow === rowCount - 1;
-            if (cardspadding > 0 && (nextRowIsLast ^ currentRowIsLast)) {
-                direction = direction - (direction > 0 ? cardspadding : -cardspadding);
+            if (currentRowIsLast) {
+                // Find closest card
+                let xOfChosenCard = startXOfLastRow + (chosenTab % cardsPerRow);
+                let closestCard = Math.min(Math.round(xOfChosenCard), cardsPerRow - 1);
+                let newDirection = xOfCurrentRow + cardsPerRow - closestCard;
+                direction = (direction > 0 ? 1 : -1) * newDirection;
+                // console.log('current row is last', xOfChosenCard, closestCard, direction)
+            } else if (nextRowIsLast) {
+                let minX = 1_000_000;
+                let xOfClosestCard = 0;
+                for (let i = 0; i < cardsLastRowCount; ++i) {
+                    let x = startXOfLastRow + i;
+                    let d = Math.abs(x - xOfCurrentRow);
+                    if (d < minX) {
+                        minX = d;
+                        xOfClosestCard = i;
+                    }
+                } 
+                let closestCard = cardsPerRow * nextRow + xOfClosestCard;
+                direction = closestCard - chosenTab;
+                // console.log('next row is last', xOfCurrentRow, xOfClosestCard, closestCard, direction, cardsPerRow)
             }
         }
         chosenTab = (chosenTab + direction + tabs.length * 100) % (tabs.length || 2);
