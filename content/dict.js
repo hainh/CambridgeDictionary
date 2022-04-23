@@ -227,7 +227,7 @@
                 var lab = elem.find('.lab').text().trim();
                 var ipa = elem.find('.ipa').text().trim();
                 return {region, aud, lab, ipa};
-            }).toArray();
+            }).toArray().filter(obj => obj.lab || obj.ipa);
             var defs = parent.find('.pos-body .dsense').map(function() {
                 var parent = $(this);
                 var def = parent.find('.def').text().trim();
@@ -323,8 +323,8 @@
                 {{#pos}}
                     <div class="pos">{{pos}}</div>
                 {{/pos}}
-                <div class="prons">
                 {{#prons}}
+                <div class="prons">
                     <span>
                         {{#region}}
                             <span class="region">{{region}}</span>&nbsp
@@ -338,8 +338,8 @@
                             <span class="ipa">/{{ipa}}/</span>
                         {{/ipa}}
                     </span>&nbsp
-                {{/prons}}
                 </div>
+                {{/prons}}
                 {{#defs}}
                     <div class="def">- {{def}}</div>
                     {{#trans}}
