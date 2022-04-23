@@ -206,7 +206,7 @@
 
             source.word = source.word || word;
             return {
-                word, pos, prons: [{ipa: pron}], defs
+                word, pos, prons: pron && [{ipa: pron}], defs
             }
         }).toArray();
     }
