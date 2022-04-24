@@ -1,9 +1,10 @@
 (function () {
-    window.onload = function () {
+    setTimeout(function () {
         loadjQuery();
         start();
         window.switchTab.init();
-    }
+        console.log("Loaded");
+    }, 100);
 
     var cambridgeDict = '';
     var defaultDict = 'english-vietnamese';
@@ -25,6 +26,7 @@
                 sendResponse(enabled);
             } else if (request.closeAllDefWindows) {
                 closeAllDefWindows();
+                removeSelection();
             } else if (request.keyChain) {
                 window.switchTab.setKeyChain(request.keyChain);
             }
@@ -34,10 +36,12 @@
         testing = true;
     }
 
+    var mouseX;
     function start() {
-        // console.log('$ version', $.fn.jquery);
-
-        $(document.body).on('mouseup', startLookup).on('keyup', closeTopWindow);
+        $(document.body)
+            .on('mouseup', startLookup)
+            .on('mousedown', onMouseDown)
+            .on('keyup', closeTopWindow);
         if (!testing) {
             chrome.runtime.sendMessage({
                 method: 'getDict'
@@ -47,11 +51,16 @@
         }
     }
 
+    function removeSelection() {
+        window.getSelection()?.removeAllRanges();
+    }
+
     /** @param {KeyboardEvent} event*/
     function closeTopWindow(event) {
         if (!event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey) {
             if (event.key.startsWith('Esc')) {
                 closeAllDefWindows();
+                removeSelection();
             } else if (/^[A-Z]$/.test(event.key.toUpperCase()) && !isEditable(event.target)) {
                 var max = -1, maxEl;
                 $('.cambr-dict-cont').each(function() {
@@ -62,6 +71,7 @@
                     }
                 })
                 maxEl && $(maxEl).find('.cambr-dict-header span.cambr-dict-close-btn').trigger('click');
+                removeSelection();
             }
         }
     }
@@ -81,27 +91,35 @@
     }
 
     function closeAllDefWindows() {
-        $('.cambr-dict-header span.cambr-dict-close-btn').trigger('click');
+        $('.cambr-dict-header span.cambr-dict-close-btn').each(function() {
+            removeDefWindow(this);
+        });
+    }
+
+    function onMouseDown(event) {
+        mouseX = event.clientX;
     }
 
     /** @param {MouseEvent} event */
     function startLookup(event) {
+        var closeAll = mouseX == event.clientX && event.button == 0;
         if (event.ctrlKey && event.shiftKey && event.altKey) {
         } else if (event.ctrlKey && event.shiftKey) {
         } else if (event.ctrlKey) {
-            closeAllDefWindows();
+            closeAll = false;
         } else if (event.altKey) {
-            return;
+            return removeSelection();
         }
         if (!enabled || event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
-            return;
+            return removeSelection();
         }
+        closeAll && closeAllDefWindows();
         var selectedText = getSelectedText();
         if (!selectedText || !selectedText.text || openingDefs[selectedText.text]) {
-            return;
+            return removeSelection();
         }
 
-        openingDefs[selectedText.text] = (openingDefs[selectedText.text] || 0) + 1;
+        openingDefs[selectedText.text] = 1;
         Object.assign(selectedText, {
             method: 'loadDict',
             dict: cambridgeDict
@@ -152,9 +170,8 @@
         dictDef.find('.cambr-dict-header span.cambr-dict-close-btn').on('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            $(this).parent().parent().remove();
-            var word = $(this).attr('data-dict');
-            openingDefs[word] = Math.max(0, (openingDefs[word] || 0) - 1);
+            removeDefWindow(this);
+            removeSelection();
         });
         dictDef.find('.help-btn').on('click', showHelp);
         dictDef.find('select').on('change', setDict);
@@ -162,6 +179,16 @@
             $(this).css('zIndex', ++zIndex);
         });
         dictDef.find('select').val(cambridgeDict || defaultDict);
+    }
+
+    function removeDefWindow(closeBtnElem) {
+        var container = $(closeBtnElem).parent().parent();
+        container.addClass('fadeout');
+        setTimeout(() => {
+            container.remove();
+            var word = $(closeBtnElem).attr('data-dict');
+            openingDefs[word] = 0;
+        }, 200)
     }
 
     /**
@@ -361,15 +388,18 @@
                 <div class="pos">No definition or translation</div>
             {{/entries}}
             <div class="dictsl">Select dictionary:</div>
-            <select class="dictsllist">
+            <select id="camb-dict-word-{{id}}-dlist" class="dictsllist">
                 <dictsllist/>
             </select>
-            <button class="help-btn">Help</button>
+            <button id="camb-dict-word-{{id}}-help" class="help-btn">Help</button>
         </div>
     </div>
     `.replace('<dictsllist/>', Object.getOwnPropertyNames(dictNames).map(dict => `<option value="${dict}">${dictNames[dict]}</option>`).join('\n'));
     
-    function showHelp() {
+    /** @param {Event} event */
+    function showHelp(event) {
+        event.preventDefault();
+        event.stopPropagation();
         var currentHelper = $('.cambr-dict-cont.helper');
         if (currentHelper.length) {
             currentHelper.css('zIndex', ++zIndex);
@@ -389,6 +419,8 @@
                 <ul>
                     <li>Ctrl+Shift+Q: Toggle enable/disable dictionary lookup (can change shortcut in Chrome extension manager).</li>
                     <li>Esc or Ctrl+Shift+Z or Ctrl+Left Click: Close all dictionary windows.</li>
+                    <li>Ctrl + double click select text to open new window and keep current window(s)</li>
+                    <li>Drag mouse down to select text to open new window and keep current window(s)</li>
                     <li>A-Z: Close top-most dictionary window.</li>
                     <li>Alt+Select Text: Select text without open dictionary</li>
                 </ul>
@@ -421,6 +453,7 @@
             return JSON.parse(decodeURIComponent(container.attr('selected-text')));
         }).toArray();
         closeAllDefWindows();
+        removeSelection();
         sts.forEach(selectedText => {
             selectedText.dict = newDict;
             loadDictWindow(selectedText);
