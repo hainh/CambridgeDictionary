@@ -28,7 +28,6 @@ function setStatus(enabled) {
  * @param {String} keyChain 
  */
 function renderShortKeys(keyChain) {
-    keyChain = keyChain || 'Alt+Q';
     let keys = keyChain.split('+');
     let shiftKey = keys.some(key => key === 'Shift');
     let ctrlKey = keys.some(key => key === 'Ctrl');

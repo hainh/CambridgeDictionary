@@ -48,6 +48,7 @@ async function get(key) {
 
 async function set(key, value) {
     await chrome.storage.sync.set({[key]: value});
+    return value;
 }
 
 async function isEnabled() {
@@ -63,16 +64,22 @@ let handlers = {
     setDict(request) {
         return set('dict', request.dict);
     },
-    getSwitchKeys() {
-        return get('switchkey');
+    async getSwitchKeys() {
+        var keys = await get('switchkey');
+        if (!keys) {
+            keys = 'Alt+Q';
+            await this.setSwitchKeys({keys})
+        }
+        return keys;
     },
-    setSwitchKeys(request) {
+    async setSwitchKeys(request) {
         for (var windowId in lastTabs) {
             for (var tabId of lastTabs[windowId]) {
                 chrome.tabs.sendMessage(tabId, {keyChain: request.keys}, function() {});
             }
         }
-        return set('switchkey', request.keys);
+        await set('switchkey', request.keys);
+        return request.keys;
     },
     async getTabs() {
         let window = await chrome.windows.getCurrent();
