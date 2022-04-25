@@ -53,7 +53,7 @@
 
     function removeSelection() {
         var selection = window.getSelection();
-        if (!selection || !getSelectedText().text) return;
+        if (!selection || !selection.rangeCount || !getSelectedText().text) return;
         selection.removeAllRanges();
     }
 
