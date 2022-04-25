@@ -52,7 +52,9 @@
     }
 
     function removeSelection() {
-        window.getSelection()?.removeAllRanges();
+        var selection = window.getSelection();
+        if (!selection || !getSelectedText().text) return;
+        selection.removeAllRanges();
     }
 
     /** @param {KeyboardEvent} event*/
@@ -102,6 +104,9 @@
 
     /** @param {MouseEvent} event */
     function startLookup(event) {
+        if (!enabled || $(event.target).hasClass('cambr-dict-close-btn')) {
+            return;
+        }
         var closeAll = mouseX == event.clientX && event.button == 0;
         const isInput = isEditable(event.target);
         if (isInput && !event.ctrlKey) {
@@ -114,13 +119,16 @@
         } else if (event.altKey) {
             return !isInput && removeSelection();
         }
-        if (!enabled || event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
+        if (event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
             return !isInput && removeSelection();
         }
         closeAll && closeAllDefWindows();
         var selectedText = getSelectedText();
-        if (!selectedText || !selectedText.text || openingDefs[selectedText.text]) {
+        if (!selectedText || openingDefs[selectedText.text]) {
             return !isInput && removeSelection();
+        }
+        if (!selectedText.text) {
+            return;
         }
 
         openingDefs[selectedText.text] = 1;
@@ -179,7 +187,6 @@
             event.preventDefault();
             event.stopPropagation();
             removeDefWindow(this);
-            removeSelection();
         });
         dictDef.find('.help-btn').on('click', showHelp);
         dictDef.find('select').on('change', setDict);
