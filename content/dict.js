@@ -87,7 +87,7 @@
             return true;
         }
 
-        return false;
+        return document.designMode === 'on';
     }
 
     function closeAllDefWindows() {
@@ -103,20 +103,24 @@
     /** @param {MouseEvent} event */
     function startLookup(event) {
         var closeAll = mouseX == event.clientX && event.button == 0;
+        const isInput = isEditable(event.target);
+        if (isInput && !event.ctrlKey) {
+            return;
+        }
         if (event.ctrlKey && event.shiftKey && event.altKey) {
         } else if (event.ctrlKey && event.shiftKey) {
         } else if (event.ctrlKey) {
             closeAll = false;
         } else if (event.altKey) {
-            return removeSelection();
+            return !isInput && removeSelection();
         }
         if (!enabled || event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
-            return removeSelection();
+            return !isInput && removeSelection();
         }
         closeAll && closeAllDefWindows();
         var selectedText = getSelectedText();
         if (!selectedText || !selectedText.text || openingDefs[selectedText.text]) {
-            return removeSelection();
+            return !isInput && removeSelection();
         }
 
         openingDefs[selectedText.text] = 1;
@@ -158,10 +162,14 @@
     function render(dictDef, selectedText) {
         dictDef.find('br').first().remove();
         $(document.body).append(dictDef);
-        var top = selectedText.y - dictDef.outerHeight() - 5;
-        var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode).scrollTop;
-        if (top - scrollTop < 0) top = selectedText.y + selectedText.height + 5;
-        var left = Math.max(0, Math.min($(document).width() - dictDef.outerWidth(), selectedText.x - dictDef.outerWidth() / 2));
+        if (selectedText.isReloaded) {
+            var { top, left } = selectedText;
+        } else {
+            var top = selectedText.y - dictDef.outerHeight() - 5;
+            var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode).scrollTop;
+            if (top - scrollTop < 0) top = selectedText.y + selectedText.height + 5;
+            var left = Math.max(0, Math.min($(document).width() - dictDef.outerWidth(), selectedText.x - dictDef.outerWidth() / 2));
+        }
         var selectedTextCopy = JSON.parse(JSON.stringify(selectedText));
         delete selectedTextCopy.definition;
         dictDef.css({top, left, zIndex: ++zIndex, width: Math.min($(document).width(), dictDef.outerWidth())})
@@ -409,9 +417,9 @@
         var selectedText = JSON.parse(decodeURIComponent(parent.attr('selected-text')));
         var dialog = $(`
         <div class="cambr-dict-cont helper">
-            <div class="cambr-dict-header">
+            <div class="cambr-dict-header" id="camb-dict-word-help">
                 <span class="cambr-dict-title">Cambridge Dictionanry</span>
-                <span class="cambr-dict-close-btn" data-dict="helper-999">x</span>
+                <span class="cambr-dict-close-btn" id="camb-dict-word-help-close" data-dict="helper-999">x</span>
             </div>
             <div class="cambr-dict-content">
                 <br/>
@@ -419,6 +427,7 @@
                 <ul>
                     <li>Ctrl+Shift+Q: Toggle enable/disable dictionary lookup (can change shortcut in Chrome extension manager).</li>
                     <li>Esc or Ctrl+Shift+Z or Ctrl+Left Click: Close all dictionary windows.</li>
+                    <li>Hold Ctrl while select text in an input to open dict window</li>
                     <li>Ctrl + double click select text to open new window and keep current window(s)</li>
                     <li>Drag mouse down to select text to open new window and keep current window(s)</li>
                     <li>A-Z: Close top-most dictionary window.</li>
@@ -448,18 +457,11 @@
 
     function setDict() {
         var newDict = $(this).val();
-        var sts = $('.cambr-dict-cont').map(function() {
-            var container = $(this);
-            return JSON.parse(decodeURIComponent(container.attr('selected-text')));
-        }).toArray();
         closeAllDefWindows();
         removeSelection();
-        sts.forEach(selectedText => {
-            selectedText.dict = newDict;
-            loadDictWindow(selectedText);
-        });
         if (testing) {
             cambridgeDict = newDict;
+            reloadAll();
         } else {
             chrome.runtime.sendMessage({
                 method: 'setDict',
@@ -467,8 +469,24 @@
             }, function (response) {
                 if (response) {
                     cambridgeDict = response;
+                    reloadAll();
                 }
             })
+        }
+
+        const reloadAll = () => {
+            var sts = $('.cambr-dict-cont').map(function() {
+                var container = $(this);
+                var selectedText = JSON.parse(decodeURIComponent(container.attr('selected-text')));
+                selectedText.isReloaded = true;
+                selectedText.top = container.css('top');
+                selectedText.left = container.css('left');
+                return selectedText;
+            }).toArray();
+            sts.forEach(selectedText => {
+                selectedText.dict = newDict;
+                loadDictWindow(selectedText);
+            });
         }
     }
 
