@@ -104,7 +104,7 @@
 
     /** @param {MouseEvent} event */
     function startLookup(event) {
-        if (!enabled || $(event.target).hasClass('cambr-dict-close-btn')) {
+        if (!enabled || event.button !== 0 || $(event.target).hasClass('cambr-dict-close-btn')) {
             return;
         }
         var closeAll = mouseX == event.clientX && event.button == 0;
@@ -119,7 +119,7 @@
         } else if (event.altKey) {
             return !isInput && removeSelection();
         }
-        if (event.button !== 0 || event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
+        if (event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
             return !isInput && removeSelection();
         }
         closeAll && closeAllDefWindows();
