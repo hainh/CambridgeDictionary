@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Cambridge Dictionary",
-    "version": "0.1",
+    "version": "1.0",
     "description": "A Cambridge dictionary extension to search a word directly in any web page",
     "author": "github.com/hainh",
     "icons": {
