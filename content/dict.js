@@ -134,7 +134,8 @@
         openingDefs[selectedText.text] = 1;
         Object.assign(selectedText, {
             method: 'loadDict',
-            dict: cambridgeDict
+            dict: cambridgeDict,
+            reloaded: false,
         });
         loadDictWindow(selectedText);
     }
@@ -154,7 +155,17 @@
     function displayDict(response) {
         if (!response) return;
         var dictDef = parseContent(response);
-        if (!dictDef.originSource.entries && !testing && response.dict !== 'english' && response.dict.startsWith('english')) {
+        if (dictDef.originSource.entries && dictDef.originSource.entries.length > 1 && response.dict !== cambridgeDict && !response.reloaded && dictDef.originSource.word) {
+            openingDefs[response.text] = 0;
+            delete history[cambridgeDict + response.text];
+            response.dict = cambridgeDict;
+            response.originText = response.text;
+            response.text = dictDef.originSource.word.replace(/\s/g, '-');
+            response.reloaded = true;
+            chrome.runtime.sendMessage(response, displayDict);
+            return;
+        }
+        else if (!dictDef.originSource.entries && !testing && response.dict.startsWith('english-')) {
             response.dict = 'english';
             chrome.runtime.sendMessage(response, displayDict);
             return;
@@ -201,33 +212,14 @@
         container.addClass('fadeout');
         setTimeout(() => {
             container.remove();
-            var word = $(closeBtnElem).attr('data-dict');
-            openingDefs[word] = 0;
+            var word = $(closeBtnElem).attr('data-dict').split('+');
+            openingDefs[word[0]] = 0;
+            openingDefs[word[1]] = 0;
         }, 200)
     }
 
     /**
-     * @typedef {Object} Definition
-     * @property {String} def
-     * @property {String} trans
-     * @property {String} examp
-     */
-    /**
-     * @typedef {Object} Pron
-     * @property {String} region
-     * @property {String} lab
-     * @property {String} aud audio
-     * @property {String} ipa
-     */
-    /**
-     * @typedef {Object} Entry 
-     * @property {String} word
-     * @property {String} pos
-     * @property {Array<Pron>} prons
-     * @property {Array<Definition>} defs
-     */
-    /**
-     * @param {{doc: JQuery<HTMLElement>}} source
+     * @param {{doc: JQuery<HTMLElement>, word: string?}} source
      * @returns {Array<Entry>}
      */
     function findEntriesEnVn(source) {
@@ -292,12 +284,17 @@
         }
     }
 
+    /**
+     * 
+     * @param {{definition: string, dict: string, text: string}} response 
+     * @returns {DictDef}
+     */
     function parseContent(response) {
         var source = {doc: $(response.definition)};
         var entries = findEntries(source, response.dict);
         if (!entries.length) {
             source = {
-                origin: response.text,
+                origin: response.text + (response.originText ? '+' + response.originText : ''),
                 id: idFn(),
                 word: decodeURIComponent(response.text),
             };
@@ -305,13 +302,13 @@
             if (response.dict !== cambridgeDict) {
                 entries.unshift({word: '', pos: `No definition or translation of "${response.text}" in ${dictNames[cambridgeDict]} Dictionary, show in English Dictionary below.`})
             }
-            source.origin = response.text;
+            source.origin = response.text + (response.originText ? '+' + response.originText : '');
             source.entries = entries;
             source.id = idFn();
         }
 
         testing && console.log(source);
-        history[cambridgeDict + response.text] = source;
+        history[cambridgeDict + (response.originText || response.text)] = source;
         var dictDef = $(Mustache.render(template, source));
         dictDef.originSource = source;
         return dictDef;
