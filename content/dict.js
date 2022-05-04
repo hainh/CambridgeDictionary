@@ -117,7 +117,7 @@
         } else if (event.ctrlKey) {
             closeAll = false;
         } else if (event.altKey) {
-            return !isInput && removeSelection();
+            return;// !isInput && removeSelection();
         }
         if (event.target.id.startsWith('camb-dict-word') || event.target.id.startsWith('cambr-dict-header')) {
             return !isInput && removeSelection();
