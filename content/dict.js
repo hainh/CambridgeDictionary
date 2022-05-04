@@ -326,31 +326,31 @@
         "english-catalan": "English–Catalan",
         "english-chinese-traditional": "English–Chinese (Tra)",
         "english-chinese-simplified": "English–Chinese (Sim)",
-        "english-czech": "English–Czech",
-        "english-danish": "English–Danish",
-        "english-french": "English–French",
-        "english-german": "English–German",
-        "english-indonesian": "English–Indonesian",
+        "english-czech.": "English–Czech",
+        "english-danish.": "English–Danish",
+        "english-french.": "English–French",
+        "english-german.": "English–German",
+        "english-indonesian.": "English–Indonesian",
         "english-italian": "English–Italian",
         "english-japanese": "English–Japanese",
         "english-korean": "English–Korean",
-        "english-malay": "English–Malay",
-        "english-norwegian": "English–Norwegian",
+        "english-malay.": "English–Malay",
+        "english-norwegian.": "English–Norwegian",
         "english-polish": "English–Polish",
         "english-portuguese": "English–Portuguese",
         "english-spanish": "English–Spanish",
         "english-russian": "English–Russian",
-        "english-thai": "English–Thai",
+        "english-thai.": "English–Thai",
         "english-turkish": "English–Turkish",
-        "dutch-english": "Dutch–English",
-        "french-english": "French–English",
-        "germanenglish": "German–English",
-        "indonesian-english": "Indonesian–English",
-        "italian-english": "Italian–English",
-        "japanese-english": "Japaneschemase–English",
-        "polish-english": "Polish–English",
-        "portuguese-english": "Portuguese–English",
-        "spanish-english": "Spanish–English",
+        "dutch-english.": "Dutch–English",
+        "french-english.": "French–English",
+        "german-english.": "German–English",
+        "indonesian-english.": "Indonesian–English",
+        "italian-english.": "Italian–English",
+        "japanese-english.": "Japanese–English",
+        "polish-english.": "Polish–English",
+        "portuguese-english.": "Portuguese–English",
+        "spanish-english.": "Spanish–English",
     };
     var template = `
     <div class="cambr-dict-cont" id="camb-dict-word-{{id}}">
@@ -409,7 +409,7 @@
             <button id="camb-dict-word-{{id}}-help" class="help-btn">Help</button>
         </div>
     </div>
-    `.replace('<dictsllist/>', Object.getOwnPropertyNames(dictNames).map(dict => `<option value="${dict}">${dictNames[dict]}</option>`).join('\n'));
+    `.replace('<dictsllist/>', Object.getOwnPropertyNames(dictNames).map(dict => `<option value="${dict}" ${(dict[dict.length - 1] === '.' ? 'disabled' : '')}>${dictNames[dict]}</option>`).join('\n'));
     
     /** @param {Event} event */
     function showHelp(event) {
