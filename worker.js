@@ -3,7 +3,6 @@ let enabled = -1;
 // chrome.action.onClicked.addListener(function(tab) { alert('icon clicked')});
 
 chrome.runtime.onStartup.addListener(onStart);
-chrome.runtime.onInstalled.addListener(onStart);
 
 function onStart() {
     if (enabled === -1) {
@@ -13,6 +12,8 @@ function onStart() {
         });
     }
 
+    console.log('Started')
+
     chrome.tabs.query({}, tabs => {
         tabs.forEach(tab => {
             lastTabs[tab.windowId] = lastTabs[tab.windowId] || [];
@@ -21,6 +22,14 @@ function onStart() {
         });
     });
 }
+
+// chrome.windows.onCreated.addListener(async window => {
+//     let tabs = await chrome.tabs.query({windowId: window.id});
+//     tabs.forEach(tab => {
+//         lastTabs[tab.windowId] = lastTabs[tab.windowId] || [];
+//         lastTabs[tab.windowId].push(tab.id);
+//     });
+// });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (!handlers[request.method]) {
@@ -143,15 +152,58 @@ chrome.commands.onCommand.addListener(async (command) => {
 let lastTabs = {};
 
 chrome.tabs.onActivated.addListener(async tab => {
-    let tabs = lastTabs[tab.windowId];
-    if (tabs) {
-        let active = tabs.indexOf(tab.tabId);
-        if (active >= 0) {
-            tabs.splice(active, 1);
-        }
-        tabs.unshift(tab.tabId);
-    } else {
-        lastTabs[tab.windowId] = [tab.tabId];
-    }
-    console.log(lastTabs, tabs);
+    await tabChanged(tab.tabId, tab.windowId, false)
 });
+
+chrome.tabs.onAttached.addListener(async tab => {
+    await tabChanged(tab.tabId, tab.windowId, false)
+});
+
+chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+    if (!removeInfo.isWindowClosing) {
+        await tabChanged(tabId, removeInfo.windowId, true)
+    }
+});
+
+chrome.tabs.onDetached.addListener(async (tabId, detachInfo) => {
+    await tabChanged(tabId, detachInfo.oldWindowId, true)
+    let window = await chrome.windows.getCurrent();
+    await tabChanged(tabId, window.id, false);
+})
+
+/**
+ * @param {Number} tabId 
+ * @param {Number} windowId 
+ * @param {Boolean} removed 
+ */
+async function tabChanged(tabId, windowId, removed) {
+    let tabs = lastTabs[windowId];
+    if (tabs) {
+        let tabIndex = tabs.indexOf(tabId);
+        if (tabIndex >= 0) {
+            tabs.splice(tabIndex, 1);
+        }
+        if (!removed) tabs.unshift(tabId);
+    } else if (!removed) {
+        lastTabs[windowId] = [tabId];
+    }
+    let allWindows = await chrome.windows.getAll();
+    let noWindow = [], windowIds = Object.getOwnPropertyNames(lastTabs);
+    for (let i = 0; i < windowIds.length; i++) {
+        windowId = +windowIds[i];
+        if (allWindows.every(window => window.id != windowId)) {
+            noWindow.push(windowId);
+        } else {
+            let allTabs = await chrome.tabs.query({windowId});
+            tabs = lastTabs[windowId];
+            for (let j = 0; j < tabs.length; j++) {
+                let tabId1 = tabs[j];
+                if (allTabs.every(tab => tab.id != tabId1)) {
+                    tabs.splice(j--, 1);
+                }
+            }
+        }
+    }
+    noWindow.forEach(windowId => delete lastTabs[windowId]);
+    console.log(removed ? 'Remove' : 'Active', tabId, lastTabs);
+}
