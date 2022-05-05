@@ -39,7 +39,7 @@
     var mouseX;
     function start() {
         $(document.body)
-            .on('mouseup', startLookup)
+            .on('mouseup', event => setTimeout(startLookup, 1, event))
             .on('mousedown', onMouseDown)
             .on('keyup', closeTopWindow);
         if (!testing) {
@@ -213,12 +213,12 @@
     function removeDefWindow(closeBtnElem) {
         var container = $(closeBtnElem).parent().parent();
         container.addClass('fadeout');
+        var word = $(closeBtnElem).attr('data-dict').split('+');
+        openingDefs[word[0]] = 0;
+        openingDefs[word[1]] = 0;
         setTimeout(() => {
             container.remove();
-            var word = $(closeBtnElem).attr('data-dict').split('+');
-            openingDefs[word[0]] = 0;
-            openingDefs[word[1]] = 0;
-        }, 200)
+        }, 400)
     }
 
     /**
@@ -355,7 +355,7 @@
     var template = `
     <div class="cambr-dict-cont fadeout" id="camb-dict-word-{{id}}">
         <div class="cambr-dict-header" id="camb-dict-word-{{id}}-header">
-            <span class="cambr-dict-title">Cambridge Dictionanry</span>
+            <span class="cambr-dict-title">Cambridge Dictionary</span>
             <span id="camb-dict-word-{{id}}-close" class="cambr-dict-close-btn" data-dict="{{origin}}">x</span>
         </div>
         <div class="cambr-dict-content">
