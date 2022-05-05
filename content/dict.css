@@ -16,7 +16,7 @@
     line-height: 1.4em;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
     opacity: 1;
-    transition: opacity 0.2s ease-in;
+    transition: opacity 0.2s ease-out;
 }
 
 .cambr-dict-cont.fadeout {
@@ -129,6 +129,7 @@
 
 .cambr-dict-cont::-webkit-scrollbar {
     width: 8px !important;
+    background-color: transparent !important;
 }
 
 .cambr-dict-cont::-webkit-scrollbar-thumb {

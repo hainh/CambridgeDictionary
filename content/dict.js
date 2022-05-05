@@ -194,6 +194,9 @@
             $(this).css('zIndex', ++zIndex);
         });
         dictDef.find('select').val(cambridgeDict || defaultDict);
+        setTimeout(() => {
+            dictDef.removeClass('fadeout')
+        }, 1);
     }
 
     function removeDefWindow(closeBtnElem) {
@@ -353,7 +356,7 @@
         "spanish-english": "Spanish–English",
     };
     var template = `
-    <div class="cambr-dict-cont" id="camb-dict-word-{{id}}">
+    <div class="cambr-dict-cont fadeout" id="camb-dict-word-{{id}}">
         <div class="cambr-dict-header" id="camb-dict-word-{{id}}-header">
             <span class="cambr-dict-title">Cambridge Dictionanry</span>
             <span id="camb-dict-word-{{id}}-close" class="cambr-dict-close-btn" data-dict="{{origin}}">x</span>
