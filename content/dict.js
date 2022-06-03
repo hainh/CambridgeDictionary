@@ -13,6 +13,7 @@
     var zIndex = 999999;
     var testing = false;
     var enabled = true;
+    var isInput = false;
     try {
         chrome.runtime.sendMessage({method: 'isEnabled'}, (value) => {
             enabled = value;
@@ -98,8 +99,10 @@
         });
     }
 
+    /** @param {MouseEvent} event */
     function onMouseDown(event) {
         mouseX = event.clientX;
+        isInput = isEditable(event.target);
     }
 
     /** @param {MouseEvent} event */
@@ -108,7 +111,6 @@
             return;
         }
         var closeAll = mouseX == event.clientX && event.button == 0;
-        const isInput = isEditable(event.target);
         if (isInput && !event.ctrlKey) {
             return;
         }
