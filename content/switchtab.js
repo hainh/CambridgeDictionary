@@ -158,7 +158,7 @@
         chosenTab = (chosenTab + direction + tabs.length * 100) % (tabs.length || 2);
         // console.log('choosen tab', chosenTab, tabs.length, direction);
         if (!tabs[chosenTab]) return console.log('chose tab failed', chosenTab, tabs.length);
-        $('.tab-row .tab-card').removeClass('active');
+        $('.cd-switchtab-tab-row .tab-card').removeClass('active');
         $('#tab-card-' + tabs[chosenTab].id).addClass('active');
         let container = $('#main-tab-container');
         if (!container.hasClass('active')) {
@@ -175,9 +175,9 @@
     }
 
     let template = `
-<div class="tabs-container" id="main-tab-container" style="width: {{width}}">
+<div class="cd-switchtab-tabs-container" id="main-tab-container" style="width: {{width}}">
     {{#rows}}
-    <div class="tab-row">
+    <div class="cd-switchtab-tab-row">
         {{#cards}}
         <div class="tab-card" id="tab-card-{{id}}">
             <div>
