@@ -107,10 +107,11 @@
 
     /** @param {MouseEvent} event */
     function startLookup(event) {
-        if (!enabled || event.button !== 0 || $(event.target).hasClass('cambr-dict-close-btn')) {
+        var closeAll = mouseX == event.clientX && event.button == 0;
+        if ((!enabled && !event.ctrlKey) || event.button !== 0 || $(event.target).hasClass('cambr-dict-close-btn')) {
+            closeAll && closeAllDefWindows();
             return;
         }
-        var closeAll = mouseX == event.clientX && event.button == 0;
         if (isInput && !event.ctrlKey) {
             return;
         }
@@ -271,8 +272,8 @@
                 var parent = $(this);
                 var def = parent.find('.def').text().trim();
                 var trans = parent.find('.trans').text().trim() || undefined;
-                var examp = parent.find('.examp').map(function(){return $(this).text().replace('●', '').trim()}).toArray();
-                return {def, trans, examp};
+                var example = parent.find('.examp').map(function(){return $(this).text().replace('●', '').trim()}).toArray();
+                return {def, trans, examp: example};
             }).toArray();
 
             source.word = source.word || word;
@@ -427,7 +428,7 @@
         var dialog = $(`
         <div class="cambr-dict-cont helper">
             <div class="cambr-dict-header" id="camb-dict-word-help">
-                <span class="cambr-dict-title">Cambridge Dictionanry</span>
+                <span class="cambr-dict-title">Cambridge Dictionary</span>
                 <span class="cambr-dict-close-btn" id="camb-dict-word-help-close" data-dict="helper-999">x</span>
             </div>
             <div class="cambr-dict-content">
@@ -499,17 +500,17 @@
         }
     }
 
-    function dragElement(elmnt) {
+    function dragElement(element) {
         var pos1 = 0,
             pos2 = 0,
             pos3 = 0,
             pos4 = 0;
-        if (document.getElementById(elmnt.id + "-header")) {
+        if (document.getElementById(element.id + "-header")) {
             // if present, the header is where you move the DIV from:
-            document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+            document.getElementById(element.id + "-header").onmousedown = dragMouseDown;
         } else {
             // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
+            element.onmousedown = dragMouseDown;
         }
 
         function dragMouseDown(e) {
@@ -532,8 +533,8 @@
             pos3 = e.clientX;
             pos4 = e.clientY;
             // set the element's new position:
-            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            element.style.top = (element.offsetTop - pos2) + "px";
+            element.style.left = (element.offsetLeft - pos1) + "px";
         }
 
         function closeDragElement(e) {

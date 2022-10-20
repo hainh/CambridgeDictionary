@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 async function loadDict(request) {
-    if (!enabled) return null;
+    // if (!enabled) return null;
     try {
         var response = await fetch(`https://dictionary.cambridge.org/dictionary/${request.dict || 'english-vietnamese'}/${request.text}`);
         var text = await response.text();
