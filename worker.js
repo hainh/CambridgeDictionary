@@ -120,6 +120,12 @@ let handlers = {
     }
 }
 
+async function toggleYoutubePlaying() {
+    var tabs = await chrome.tabs.query({});
+    tabs.filter(tab => tab.url.indexOf('youtube.com') > 0)
+        .forEach(tab => chrome.tabs.sendMessage(tab.id, {youtube: true}));
+}
+
 function setIcon(enabled) {
     const icon_enabled = {
         "16": "icon16.png",
@@ -142,6 +148,9 @@ chrome.commands.onCommand.addListener(async (command) => {
         case 'close-all-definition-windows':
             var tabs = await chrome.tabs.query({active: true, currentWindow: true});
             chrome.tabs.sendMessage(tabs[0].id, {closeAllDefWindows: true});
+            break;
+        case 'pause-youtube':
+            await toggleYoutubePlaying();
             break;
     }
 });

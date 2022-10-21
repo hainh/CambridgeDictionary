@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/hainh/CambridgeDictionary#readme",
   "dependencies": {
-    "@types/chrome": "0.0.178",
+    "@types/chrome": "^0.0.178",
     "@types/jquery": "^3.5.13"
   }
 }
